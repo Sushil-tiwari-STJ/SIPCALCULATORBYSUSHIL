@@ -1,0 +1,6 @@
+{
+  "name": "SIP Calculator & Financial Planner",
+  "description": "An advanced SIP calculator with comprehensive financial planning, goal-based wealth roadmap, step-up projection, inflation adjustment, and tax analytics. Made by Sushil.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
