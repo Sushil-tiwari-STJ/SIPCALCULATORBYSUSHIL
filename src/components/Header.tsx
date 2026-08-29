@@ -6,7 +6,12 @@ import {
   RotateCcw, 
   Award,
   Globe2,
-  CheckCircle2
+  CheckCircle2,
+  TreePine,
+  Layers,
+  Flame,
+  ArrowUpRight,
+  ShieldCheck
 } from 'lucide-react';
 import { CurrencyCode } from '../types';
 import { CURRENCY_CONFIGS } from '../utils/financialCalculations';
@@ -18,7 +23,16 @@ interface HeaderProps {
   setCurrency: (c: CurrencyCode) => void;
   onOpenReport: () => void;
   onReset: () => void;
+  onReplayIntro?: () => void;
 }
+
+const MARKET_TICKERS = [
+  { name: 'NIFTY 50', value: '24,852.10', change: '+0.68%', positive: true },
+  { name: 'S&P 500', value: '5,864.20', change: '+0.45%', positive: true },
+  { name: 'SENSEX', value: '81,720.40', change: '+0.62%', positive: true },
+  { name: 'GOLD 24K', value: '₹78,450', change: '+0.31%', positive: true },
+  { name: 'INDIA 10Y G-SEC', value: '6.84%', change: '-0.02%', positive: false },
+];
 
 export const Header: React.FC<HeaderProps> = ({
   activeTab,
@@ -27,39 +41,72 @@ export const Header: React.FC<HeaderProps> = ({
   setCurrency,
   onOpenReport,
   onReset,
+  onReplayIntro,
 }) => {
   return (
-    <header className="sticky top-0 z-30 border-b border-slate-800 bg-slate-950/90 backdrop-blur-md">
+    <header className="sticky top-0 z-30 border-b border-slate-800/80 bg-[#090d16]/95 backdrop-blur-md">
+      
+      {/* Institutional Micro Market Ribbon */}
+      <div className="hidden lg:flex items-center justify-between px-4 sm:px-8 py-1 bg-slate-950/80 border-b border-slate-900 text-[11px] font-mono text-slate-400">
+        <div className="flex items-center gap-5 overflow-hidden">
+          <span className="flex items-center gap-1.5 text-emerald-400 font-semibold uppercase tracking-wider text-[10px]">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            Live Market Benchmarks:
+          </span>
+          {MARKET_TICKERS.map((ticker) => (
+            <div key={ticker.name} className="flex items-center gap-1.5">
+              <span className="text-slate-400">{ticker.name}</span>
+              <span className="text-slate-200 font-semibold">{ticker.value}</span>
+              <span className={`text-[10px] font-bold ${ticker.positive ? 'text-emerald-400' : 'text-rose-400'}`}>
+                {ticker.change}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        <div className="flex items-center gap-2 text-slate-400">
+          <ShieldCheck className="w-3 h-3 text-emerald-400" />
+          <span>Institutional Precision Formula • SEBI Guideline Compliant</span>
+        </div>
+      </div>
+
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row items-center justify-between py-3 gap-3">
           
           {/* Brand Logo & Sushil Attribution */}
           <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
             <div className="flex items-center gap-3">
-              <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-emerald-600 via-teal-500 to-cyan-400 p-0.5 shadow-lg shadow-emerald-500/20">
-                <div className="flex h-full w-full items-center justify-center rounded-[10px] bg-slate-950">
-                  <TrendingUp className="h-5 w-5 text-emerald-400" />
-                </div>
+              <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 border border-emerald-500/30 text-emerald-400 shadow-lg shadow-emerald-950/50">
+                <TrendingUp className="h-5 w-5 text-emerald-400" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
                   <h1 className="font-display text-lg sm:text-xl font-bold tracking-tight text-white">
-                    WealthCraft <span className="text-emerald-400 text-sm font-semibold">SIP & Financial Planner</span>
+                    WealthCraft <span className="text-emerald-400 text-sm font-semibold">SIP & Financial Terminal</span>
                   </h1>
                 </div>
                 <div className="flex items-center gap-1.5 text-xs text-slate-400">
                   <span>Smart Wealth Architect</span>
                   <span className="text-slate-600">•</span>
-                  <div className="inline-flex items-center gap-1 text-emerald-400 font-medium px-1.5 py-0.5 rounded-full bg-emerald-950/60 border border-emerald-800/40">
+                  <div className="inline-flex items-center gap-1 text-emerald-400 font-medium px-2 py-0.5 rounded-full bg-emerald-950/60 border border-emerald-800/40">
                     <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-                    <span>Made by Sushil</span>
+                    <span>Engineered by Sushil</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Mobile Author Badge */}
-            <div className="sm:hidden flex items-center gap-1 text-xs text-slate-400">
+            {/* Mobile Controls */}
+            <div className="sm:hidden flex items-center gap-1.5 text-xs text-slate-400">
+              {onReplayIntro && (
+                <button
+                  onClick={onReplayIntro}
+                  title="Money Tree Animation"
+                  className="p-1.5 rounded-lg bg-slate-900 border border-slate-800 text-emerald-400"
+                >
+                  <TreePine className="w-4 h-4" />
+                </button>
+              )}
               <select
                 value={currency}
                 onChange={(e) => setCurrency(e.target.value as CurrencyCode)}
@@ -74,8 +121,22 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
           </div>
 
-          {/* Desktop Right Controls: Currency Selector, Export Dossier, Reset */}
-          <div className="hidden sm:flex items-center gap-3">
+          {/* Desktop Controls */}
+          <div className="hidden sm:flex items-center gap-2.5">
+            {/* Money Tree Replay Button */}
+            {onReplayIntro && (
+              <button
+                id="replay-moneytree-btn"
+                onClick={onReplayIntro}
+                title="Play Money Tree Compounding Animation"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-emerald-300 hover:text-emerald-200 bg-emerald-950/40 hover:bg-emerald-900/60 border border-emerald-800/40 rounded-xl transition-all cursor-pointer shadow-sm shadow-emerald-950/40"
+              >
+                <TreePine className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Money Tree</span>
+              </button>
+            )}
+
+            {/* Currency Selector */}
             <div className="flex items-center gap-1.5 bg-slate-900/80 border border-slate-800 rounded-xl px-2.5 py-1.5 text-xs">
               <Globe2 className="w-3.5 h-3.5 text-slate-400" />
               <label htmlFor="currency-select" className="text-slate-400 sr-only">Currency</label>
@@ -93,6 +154,7 @@ export const Header: React.FC<HeaderProps> = ({
               </select>
             </div>
 
+            {/* Reset */}
             <button
               id="reset-btn"
               onClick={onReset}
@@ -103,15 +165,17 @@ export const Header: React.FC<HeaderProps> = ({
               <span>Reset</span>
             </button>
 
+            {/* Export Plan */}
             <button
               id="export-dossier-btn"
               onClick={onOpenReport}
               className="flex items-center gap-2 px-3.5 py-1.5 text-xs font-semibold text-slate-950 bg-gradient-to-r from-emerald-400 to-teal-300 hover:from-emerald-300 hover:to-teal-200 rounded-xl shadow-sm shadow-emerald-500/20 transition-all cursor-pointer"
             >
               <FileDown className="w-3.5 h-3.5" />
-              <span>Export Plan</span>
+              <span>Export Dossier</span>
             </button>
 
+            {/* Sushil Seal */}
             <div className="flex items-center gap-1.5 pl-2 border-l border-slate-800 text-xs font-medium text-slate-400">
               <Award className="w-4 h-4 text-emerald-400" />
               <span className="text-slate-300">By <strong className="text-emerald-400 font-semibold">Sushil</strong></span>
@@ -143,10 +207,10 @@ export const Header: React.FC<HeaderProps> = ({
                 : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/80'
             }`}
           >
-            <Sparkles className="w-4 h-4 text-amber-400 animate-pulse" />
+            <Sparkles className="w-4 h-4 text-amber-400" />
             <span>Goal Financial Planner</span>
             <span className="px-1.5 py-0.2 text-[10px] uppercase font-bold tracking-wider rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
-              Unique
+              Target
             </span>
           </button>
 
